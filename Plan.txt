@@ -1,0 +1,635 @@
+ROLE: You are a senior Unity game developer AI.
+GOAL: Implement systems incrementally without breaking dependencies.
+CONSTRAINT: Follow AI READABLE SPECIFICATION strictly.
+
+
+# STICKMAN BRAINROT RUNNER - MASTER PLAN
+
+## PROJECT OVERVIEW
+
+Game Type: Slow chaotic auto-runner (3 lanes)
+Platform: Mobile (Unity Android build)
+Core Identity: "Playable chaos" (8/10 brainrot, not 10/10 unplayable)
+
+PLAYER EXPERIENCE GOAL:
+
+* Starts simple
+* Quickly becomes weird
+* Constant random events (brainrot)
+* Player feels confused but still in control
+
+---
+
+## CORE GAME LOOP
+
+1. Player auto-runs forward
+2. Player switches lanes (left / middle / right)
+3. Avoid obstacles
+4. Collect coins
+5. Score increases over time
+6. Random brainrot events trigger based on score
+7. Game ends on collision
+
+---
+
+# CORE SYSTEMS
+
+1. PLAYER CONTROLLER
+
+---
+
+* Auto forward movement (constant speed)
+* Lane system:
+
+  * 3 positions (X axis)
+  * Smooth transition between lanes
+* Input:
+
+  * Swipe left/right OR buttons
+* Collision detection
+
+TASKS:
+
+* Create Player prefab
+* Implement lane switching
+* Add movement smoothing
+* Add collision system
+
+---
+
+2. CAMERA SYSTEM
+
+---
+
+* Follows player smoothly
+* Slight delay for "floaty weird feeling"
+* Optional: small shake during events
+
+TASKS:
+
+* Camera follow script
+* Add smooth damping
+* Add shake placeholder
+
+---
+
+3. OBSTACLE SYSTEM
+
+---
+
+* Spawn ahead of player
+* Random lane placement
+* Types:
+
+  * Static obstacle
+  * Moving obstacle (later)
+
+TASKS:
+
+* Create obstacle prefabs
+* Spawn manager
+* Random lane assignment
+* Despawn behind player
+
+---
+
+4. COIN SYSTEM (YOUR SCALING IDEA)
+
+---
+
+Coin value based on score:
+
+Score 1–30   → value = 1
+Score 30–60  → value = 2
+Score 60–99  → value = 3
+Score 100+   → value = 5
+
+* Coins spawn like obstacles
+* Add simple pickup effect (later)
+
+TASKS:
+
+* Coin prefab
+* Pickup detection
+* Value scaling function
+* UI counter
+
+---
+
+5. SCORE SYSTEM
+
+---
+
+* Increases over time (distance-based)
+* Drives:
+
+  * Coin value
+  * Brainrot events
+  * Difficulty
+
+TASKS:
+
+* Score manager
+* UI display
+* Hook into other systems
+
+---
+
+# BRAINROT SYSTEM (CORE FEATURE)
+
+6. RANDOM EVENT SYSTEM (ALTERNATIV B)
+
+---
+
+* Trigger every X score interval (ex: every 10–20 score)
+* Random event selected
+
+EVENT EXAMPLES:
+
+* "SCREEN FLIP"
+* "LANES SWAP"
+* "ZOOM IN"
+* "RANDOM TEXT SPAM"
+* "FAKE ERROR POPUP"
+* "SLOW MOTION"
+* "SPEED BURST"
+
+IMPORTANT:
+
+* Only 1–2 events active at same time (keep playable)
+
+TASKS:
+
+* Event manager system
+* Timer / score trigger
+* Random selector
+* Event duration system
+
+---
+
+7. VISUAL CHAOS SYSTEM
+
+---
+
+* TikTok style overlays:
+
+  * Random subtitles
+  * Flashing UI
+  * Fake captions
+
+TASKS:
+
+* UI overlay system
+* Text spawner
+* Random phrases list
+
+---
+
+8. AUDIO SYSTEM (PLACEHOLDER)
+
+---
+
+* Trigger by score milestones
+* Random sound events
+
+FOR NOW:
+
+* Empty functions only (placeholders)
+
+TASKS:
+
+* Audio manager script
+* Event hooks (no real audio yet)
+
+---
+
+# META SYSTEMS
+
+9. FAKE ADS SYSTEM
+
+---
+
+* Random popup mid-game
+* Blocks screen briefly
+* Disappears
+
+TASKS:
+
+* UI popup prefab
+* Random trigger
+* Close after delay
+
+---
+
+10. NPC TEXT SYSTEM
+
+---
+
+* Random comments on screen:
+
+  * "bro what are you doing"
+  * "this run is trash"
+  * "touch grass"
+
+TASKS:
+
+* Text system
+* Random trigger
+* Fade in/out
+
+---
+
+# GAME FLOW
+
+11. GAME STATES
+
+---
+
+* Start menu
+* Playing
+* Game over
+
+TASKS:
+
+* Game manager
+* State switching
+
+---
+
+12. GAME OVER SYSTEM
+
+---
+
+* Show score
+* Restart button
+
+TASKS:
+
+* UI screen
+* Restart logic
+
+---
+
+# PROJECT STRUCTURE (UNITY)
+
+Assets/
+Scripts/
+Core/
+Player/
+Systems/
+UI/
+Events/
+Prefabs/
+Player/
+Obstacles/
+Coins/
+UI/
+Scenes/
+MainGame.unity
+
+---
+
+# GITHUB STRUCTURE
+
+REPO SETUP:
+
+* main branch
+* dev branch
+
+BRANCH NAMING:
+
+* feature/player-movement
+* feature/coin-system
+* feature/brainrot-events
+
+---
+
+# GITHUB TASKS (ISSUES)
+
+## PHASE 1 – FOUNDATION
+
+[ ] Setup Unity project
+[ ] Create basic scene
+[ ] Player movement (lane system)
+[ ] Camera follow
+[ ] Basic obstacle spawning
+
+## PHASE 2 – GAMEPLAY CORE
+
+[ ] Collision system
+[ ] Score system
+[ ] Coin system
+[ ] UI (score + coins)
+
+## PHASE 3 – BRAINROT CORE
+
+[ ] Event system base
+[ ] Add 3 random events
+[ ] Event timer system
+
+## PHASE 4 – CHAOS LAYER
+
+[ ] Add visual overlays
+[ ] Add NPC text system
+[ ] Add fake ads system
+
+## PHASE 5 – POLISH
+
+[ ] Balance speed
+[ ] Limit chaos (max 2 events)
+[ ] Add juice (shake, effects)
+
+---
+
+# BUILD ORDER (VERY IMPORTANT)
+
+STEP 1:
+Player movement ONLY
+
+STEP 2:
+Add camera
+
+STEP 3:
+Add obstacles
+
+STEP 4:
+Add collision (make game playable)
+
+STEP 5:
+Add score system
+
+STEP 6:
+Add coins
+
+STEP 7:
+Add event system (simple first)
+
+STEP 8:
+Add chaos (UI/text/ads)
+
+---
+
+# RULES (DO NOT BREAK)
+
+1. Do NOT add everything at once
+2. Always test after each system
+3. Keep chaos controlled (max 2 effects)
+4. If game feels unfair → fix immediately
+
+---
+
+# END GOAL
+
+A mobile runner that feels like:
+
+* "What is happening?"
+* But still playable
+* Addictive because of randomness
+
+======================================
+
+
+
+# AI READABLE SPECIFICATION LAYER
+
+## PURPOSE
+
+This section is designed for AI agents to:
+
+* Understand system dependencies
+* Generate code safely
+* Avoid breaking existing systems
+
+---
+
+## GLOBAL NAMING CONVENTIONS
+
+All scripts must follow:
+
+* PascalCase for classes
+* camelCase for variables
+* Prefix systems with:
+
+  * Player_
+  * System_
+  * UI_
+  * Event_
+
+Examples:
+
+* Player_Controller.cs
+* System_ScoreManager.cs
+* Event_ScreenFlip.cs
+
+---
+
+## CORE DATA CONTRACTS
+
+PLAYER STATE:
+{
+currentLane: int (-1, 0, 1),
+isAlive: bool,
+speed: float
+}
+
+GAME STATE:
+{
+score: float,
+coins: int,
+activeEvents: list,
+gameState: string ("menu", "playing", "gameover")
+}
+
+---
+
+## SYSTEM INPUT / OUTPUT DEFINITIONS
+
+PLAYER CONTROLLER
+INPUT:
+
+* swipeLeft (bool)
+* swipeRight (bool)
+
+OUTPUT:
+
+* laneChange (int)
+* position (Vector3)
+
+---
+
+SCORE SYSTEM
+INPUT:
+
+* deltaTime (float)
+
+OUTPUT:
+
+* score (float)
+
+RULE:
+score += time * multiplier
+
+---
+
+COIN SYSTEM
+INPUT:
+
+* playerCollision (bool)
+* currentScore (float)
+
+OUTPUT:
+
+* coinsAdded (int)
+
+RULE:
+IF score < 30 → value = 1
+IF 30 <= score < 60 → value = 2
+IF 60 <= score < 100 → value = 3
+IF score >= 100 → value = 5
+
+---
+
+## EVENT SYSTEM (CRITICAL)
+
+TRIGGER RULE:
+
+* Every 10–20 score interval:
+  triggerRandomEvent()
+
+CONSTRAINTS:
+
+* maxActiveEvents = 2
+* eventDuration = random(3–8 seconds)
+
+EVENT OBJECT STRUCTURE:
+{
+eventName: string,
+duration: float,
+isActive: bool
+}
+
+---
+
+## EVENT EXECUTION TEMPLATE (PSEUDOCODE)
+
+function triggerRandomEvent():
+if activeEvents.count >= 2:
+return
+
+event = getRandomEvent()
+activate(event)
+
+---
+
+function activate(event):
+event.isActive = true
+add to activeEvents
+
+wait(event.duration)
+
+deactivate(event)
+
+---
+
+function deactivate(event):
+event.isActive = false
+remove from activeEvents
+
+---
+
+## OBSTACLE SYSTEM
+
+SPAWN RULE:
+
+* spawnDistanceAhead = constant
+* lane = random(-1, 0, 1)
+
+DESPAWN RULE:
+
+* if object behind player → destroy
+
+---
+
+## UI SYSTEM
+
+TEXT OVERLAY RULE:
+
+* Trigger randomly OR via events
+* Max 3 texts on screen
+
+---
+
+## FAKE ADS SYSTEM
+
+TRIGGER:
+
+* random chance per 15 seconds
+
+BEHAVIOR:
+
+* block input for 1 second
+* auto close
+
+---
+
+## DEPENDENCY GRAPH
+
+Player_Controller
+↓
+System_Collision
+↓
+System_GameManager
+↓
+System_ScoreManager
+↓
+System_EventManager
+
+---
+
+## SAFE IMPLEMENTATION RULES
+
+1. Do NOT modify multiple systems at once
+2. Always return values (no hidden state changes)
+3. Use events/delegates instead of hard references
+4. Avoid circular dependencies
+
+---
+
+## TEST CASES (FOR AI VALIDATION)
+
+TEST 1:
+
+* Player switches lane → position updates correctly
+
+TEST 2:
+
+* Coin collected at score 50 → adds 2 coins
+
+TEST 3:
+
+* 2 events active → third event blocked
+
+TEST 4:
+
+* Collision → gameState = "gameover"
+
+---
+
+## EXTENSION RULES
+
+When adding new features:
+
+* Must not break:
+
+  * Player movement
+  * Score system
+  * Event system
+
+* Must follow naming conventions
+
+* Must define input/output clearly
+
+---
+
+# END AI SPEC
+
