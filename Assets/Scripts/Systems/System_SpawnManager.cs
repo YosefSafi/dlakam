@@ -11,16 +11,19 @@ namespace StickmanBrainrot.Systems
     {
         [Header("Spawn Settings")]
         [SerializeField] private GameObject[] obstaclePrefabs;
+        [SerializeField] private GameObject coinPrefab;
         [SerializeField] private Transform playerTransform;
         [SerializeField] private float spawnDistanceAhead = 50f;
         [SerializeField] private float initialSpawnDistance = 20f;
         [SerializeField] private float spawnInterval = 3f;
-        
+        [SerializeField] private float itemSpawnChance = 0.5f; // 50% chance to spawn coin instead of obstacle? 
+                                                              // Actually let's just spawn both.
+
         [Header("Lane Settings")]
         [SerializeField] private float laneDistance = 3f;
 
         private float nextSpawnTime;
-        private List<GameObject> activeObstacles = new List<GameObject>();
+        private List<GameObject> activeObjects = new List<GameObject>();
         private float despawnDistanceBehind = 10f;
 
         private void Start()
@@ -33,7 +36,7 @@ namespace StickmanBrainrot.Systems
             // Initial spawning to populate the path
             for (int i = 0; i < 5; i++)
             {
-                SpawnObstacle(initialSpawnDistance + (i * 15f));
+                SpawnRandomAtDistance(initialSpawnDistance + (i * 15f));
             }
         }
 
@@ -44,44 +47,65 @@ namespace StickmanBrainrot.Systems
             // 1. Time-based Spawning
             if (Time.time >= nextSpawnTime)
             {
-                SpawnObstacle(spawnDistanceAhead);
+                SpawnRandomAtDistance(spawnDistanceAhead);
                 nextSpawnTime = Time.time + spawnInterval;
             }
 
             // 2. Cleanup
-            CleanupObstacles();
+            CleanupObjects();
+        }
+
+        private void SpawnRandomAtDistance(float distance)
+        {
+            // Randomly decide between obstacle or coin
+            if (Random.value > 0.3f)
+            {
+                SpawnObstacle(distance);
+            }
+            else
+            {
+                SpawnCoin(distance);
+            }
         }
 
         private void SpawnObstacle(float distance)
         {
             if (obstaclePrefabs.Length == 0) return;
 
-            // Randomize lane (-1, 0, 1)
             int lane = Random.Range(-1, 2);
             Vector3 spawnPosition = new Vector3(lane * laneDistance, 0, playerTransform.position.z + distance);
 
-            // Select random prefab
             int prefabIndex = Random.Range(0, obstaclePrefabs.Length);
             GameObject newObstacle = Instantiate(obstaclePrefabs[prefabIndex], spawnPosition, Quaternion.identity);
             
-            activeObstacles.Add(newObstacle);
+            activeObjects.Add(newObstacle);
         }
 
-        private void CleanupObstacles()
+        private void SpawnCoin(float distance)
         {
-            for (int i = activeObstacles.Count - 1; i >= 0; i--)
+            if (coinPrefab == null) return;
+
+            int lane = Random.Range(-1, 2);
+            Vector3 spawnPosition = new Vector3(lane * laneDistance, 1.0f, playerTransform.position.z + distance); // Coins slightly floating
+
+            GameObject newCoin = Instantiate(coinPrefab, spawnPosition, Quaternion.identity);
+            activeObjects.Add(newCoin);
+        }
+
+        private void CleanupObjects()
+        {
+            for (int i = activeObjects.Count - 1; i >= 0; i--)
             {
-                if (activeObstacles[i] == null)
+                if (activeObjects[i] == null)
                 {
-                    activeObstacles.RemoveAt(i);
+                    activeObjects.RemoveAt(i);
                     continue;
                 }
 
-                // If obstacle is too far behind the player, destroy it
-                if (activeObstacles[i].transform.position.z < playerTransform.position.z - despawnDistanceBehind)
+                if (activeObjects[i].transform.position.z < playerTransform.position.z - despawnDistanceBehind)
                 {
-                    Destroy(activeObstacles[i]);
-                    activeObstacles.RemoveAt(i);
+                    Destroy(activeObjects[i]);
+                    activeObjects.RemoveAt(i);
                 }
             }
         }
