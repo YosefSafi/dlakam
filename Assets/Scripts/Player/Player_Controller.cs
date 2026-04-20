@@ -46,6 +46,7 @@ namespace StickmanBrainrot.Player
         private void Update()
         {
             if (controller == null) return;
+            if (System_GameManager.Instance != null && !System_GameManager.Instance.IsPlaying) return;
 
             // 1. Handle Lane Switching Input
             HandleLaneInput();
