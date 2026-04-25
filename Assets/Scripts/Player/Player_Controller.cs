@@ -48,7 +48,13 @@ namespace StickmanBrainrot.Player
 
         private void Update()
         {
-            if (controller == null) return;
+            if (controller == null)
+            {
+                controller = GetComponent<CharacterController>();
+                if (controller == null) return;
+            }
+
+            // If there is no GameManager in the scene, we still want to move for testing purposes
             if (System_GameManager.Instance != null && !System_GameManager.Instance.IsPlaying) return;
 
             // 1. Handle Lane Switching Input
@@ -56,8 +62,9 @@ namespace StickmanBrainrot.Player
 
             // 2. Calculate Horizontal Movement (Lane Based)
             float targetX = currentLane * laneDistance;
-            float newX = Mathf.MoveTowards(transform.position.x, targetX, laneChangeSpeed * Time.deltaTime);
-            float xMovement = newX - transform.position.x;
+            float currentX = transform.position.x;
+            float newX = Mathf.MoveTowards(currentX, targetX, laneChangeSpeed * Time.deltaTime);
+            float xMovement = newX - currentX;
 
             // 3. Handle Jump & Gravity
             bool isGrounded = controller.isGrounded;
@@ -74,8 +81,6 @@ namespace StickmanBrainrot.Player
             velocity.y += gravity * Time.deltaTime;
 
             // 4. Combine Movement
-            // X: Lane movement, Y: Jump/Gravity (multiplied by dt), Z: Auto-forward
-            // Note: CharacterController.Move expects absolute movement vector for the frame.
             float currentForwardSpeed = forwardSpeed * speedMultiplier;
             Vector3 moveVector = new Vector3(xMovement, velocity.y * Time.deltaTime, currentForwardSpeed * Time.deltaTime);
             controller.Move(moveVector);
@@ -85,14 +90,15 @@ namespace StickmanBrainrot.Player
         {
             if (moveAction == null) return;
 
+            // Use WasPressedThisFrame style check for discrete lane switching
             if (moveAction.triggered)
             {
-                float moveValue = moveAction.ReadValue<Vector2>().x;
-                if (moveValue < -0.1f)
+                Vector2 moveValue = moveAction.ReadValue<Vector2>();
+                if (moveValue.x < -0.1f)
                 {
                     ChangeLane(-1);
                 }
-                else if (moveValue > 0.1f)
+                else if (moveValue.x > 0.1f)
                 {
                     ChangeLane(1);
                 }
