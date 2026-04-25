@@ -43,6 +43,7 @@ namespace StickmanBrainrot.Systems
         private void Update()
         {
             if (playerTransform == null) return;
+            if (System_GameManager.Instance != null && !System_GameManager.Instance.IsPlaying) return;
 
             // 1. Time-based Spawning
             if (Time.time >= nextSpawnTime)

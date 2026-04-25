@@ -41,11 +41,8 @@ namespace StickmanBrainrot.Systems
 
         private void OnHitCoin(GameObject coin)
         {
-            // Handled in Step 6 (Coin system)
+            // Handled in System_Coin.cs Collect() method
             Debug.Log("PLAYER COLLECTED COIN!");
-            
-            // For now:
-            Destroy(coin);
         }
     }
 }
