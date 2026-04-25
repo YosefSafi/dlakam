@@ -1,17 +1,9 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StickmanBrainrot.Events
 {
-    [System.Serializable]
-    public class BrainrotEvent
-    {
-        public string eventName;
-        public float duration;
-        public bool isActive;
-    }
-
     /// <summary>
     /// Manages the triggering and lifecycle of random "Brainrot" events.
     /// </summary>
@@ -20,17 +12,27 @@ namespace StickmanBrainrot.Events
         public static System_EventManager Instance { get; private set; }
 
         [Header("Event Settings")]
-        [SerializeField] private float eventCheckInterval = 10f; // Score interval
+        [SerializeField] private float eventCheckInterval = 15f; // Score interval
         [SerializeField] private int maxActiveEvents = 2;
-        [SerializeField] private List<BrainrotEvent> availableEvents = new List<BrainrotEvent>();
+        
+        [Header("Available Events")]
+        [SerializeField] private List<Event_Base> availableEvents = new List<Event_Base>();
 
         private float lastTriggerScore = 0f;
-        private List<BrainrotEvent> activeEvents = new List<BrainrotEvent>();
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
             else Destroy(gameObject);
+        }
+
+        private void Start()
+        {
+            // Auto-gather events attached to this object or its children if the list is empty
+            if (availableEvents.Count == 0)
+            {
+                availableEvents.AddRange(GetComponentsInChildren<Event_Base>());
+            }
         }
 
         private void Update()
@@ -49,28 +51,19 @@ namespace StickmanBrainrot.Events
 
         public void TriggerRandomEvent()
         {
-            if (activeEvents.Count >= maxActiveEvents) return;
+            if (availableEvents == null || availableEvents.Count == 0) return;
 
-            // Pick a random event (placeholder: just logging for now)
-            Debug.Log("BRAINROT EVENT TRIGGERED!");
+            int activeCount = availableEvents.Count(e => e.IsActive);
+            if (activeCount >= maxActiveEvents) return;
+
+            // Pick a random event that is not currently active
+            List<Event_Base> inactiveEvents = availableEvents.Where(e => !e.IsActive).ToList();
             
-            // In a real scenario, we'd pick from availableEvents
-            // and call a specific event script.
-            StartCoroutine(PlaceholderEventRoutine("RANDOM_CHAOS", 5f));
-        }
-
-        private IEnumerator PlaceholderEventRoutine(string name, float duration)
-        {
-            BrainrotEvent newEvent = new BrainrotEvent { eventName = name, duration = duration, isActive = true };
-            activeEvents.Add(newEvent);
-
-            Debug.Log("Event Started: " + name);
-
-            yield return new WaitForSeconds(duration);
-
-            newEvent.isActive = false;
-            activeEvents.Remove(newEvent);
-            Debug.Log("Event Ended: " + name);
+            if (inactiveEvents.Count > 0)
+            {
+                Event_Base chosenEvent = inactiveEvents[Random.Range(0, inactiveEvents.Count)];
+                chosenEvent.StartEvent();
+            }
         }
     }
 }

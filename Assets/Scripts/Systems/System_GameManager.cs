@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using StickmanBrainrot.UI; // Added reference to UI namespace
 
 namespace StickmanBrainrot.Systems
 {
@@ -20,7 +21,7 @@ namespace StickmanBrainrot.Systems
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                // DontDestroyOnLoad(gameObject); // We probably don't want this if we reload the scene and it's in the scene
             }
             else
             {
@@ -35,15 +36,22 @@ namespace StickmanBrainrot.Systems
             currentState = GameState.GameOver;
             Debug.Log("GAME OVER! Final Score: " + (System_ScoreManager.Instance != null ? System_ScoreManager.Instance.CurrentScore : 0));
             
-            // Trigger UI or Restart logic here
-            // Time.timeScale = 0f; // Pause game? Or let chaos continue while dead?
+            // Pause the game mechanics
+            Time.timeScale = 0f; 
+
+            // Show Game Over UI
+            UI_GameOver gameOverUI = Object.FindAnyObjectByType<UI_GameOver>();
+            if (gameOverUI != null)
+            {
+                gameOverUI.ShowGameOver();
+            }
         }
 
         public void RestartGame()
         {
             Time.timeScale = 1f;
+            // Since we aren't using DontDestroyOnLoad, reload clears the old instance
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            currentState = GameState.Playing;
         }
 
         public GameState CurrentState => currentState;

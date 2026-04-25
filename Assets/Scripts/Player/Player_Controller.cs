@@ -17,6 +17,9 @@ namespace StickmanBrainrot.Player
         [SerializeField] private float jumpHeight = 2f;
         [SerializeField] private float gravity = -20f;
 
+        [Header("Runtime Multipliers")]
+        private float speedMultiplier = 1f;
+
         [Header("Lane State")]
         [SerializeField] private int currentLane = 0; // -1, 0, 1
         
@@ -73,7 +76,8 @@ namespace StickmanBrainrot.Player
             // 4. Combine Movement
             // X: Lane movement, Y: Jump/Gravity (multiplied by dt), Z: Auto-forward
             // Note: CharacterController.Move expects absolute movement vector for the frame.
-            Vector3 moveVector = new Vector3(xMovement, velocity.y * Time.deltaTime, forwardSpeed * Time.deltaTime);
+            float currentForwardSpeed = forwardSpeed * speedMultiplier;
+            Vector3 moveVector = new Vector3(xMovement, velocity.y * Time.deltaTime, currentForwardSpeed * Time.deltaTime);
             controller.Move(moveVector);
         }
 
@@ -100,8 +104,18 @@ namespace StickmanBrainrot.Player
             currentLane = Mathf.Clamp(currentLane + direction, -1, 1);
         }
 
-        // Getters for external systems
+        // Methods for external systems
+        public void ModifySpeed(float multiplier)
+        {
+            speedMultiplier = multiplier;
+        }
+
+        public void ResetSpeed()
+        {
+            speedMultiplier = 1f;
+        }
+
         public int CurrentLane => currentLane;
-        public float ForwardSpeed => forwardSpeed;
+        public float ForwardSpeed => forwardSpeed * speedMultiplier;
     }
 }
